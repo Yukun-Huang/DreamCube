@@ -46,13 +46,13 @@ var 	cam_fov=90;
 var img_buffer = null;
 var img = new Image();
 img.onload = imageLoaded;
-img.src = 'results/pano/bedroom.png';
+img.src = '';
 
 //Load image 
 var depth_buffer = null;
 var depth = new Image();
 depth.onload = depthLoaded;
-depth.src = 'results/pano_depth/bedroom.png';
+depth.src = '';
 
 // 初始化
 function init_pano(){
@@ -70,43 +70,42 @@ function init_pano(){
 	depth_canvas.onmousewheel = mouseScroll;
     // 初始化下拉框选项
 	// fetchAndPopulateImages();
-	scanAndPopulateImages("results/pano/");
+	scanAndPopulateImages("results/images.json");
 }
 
-// 直接扫描指定的图像路径并填充下拉框
-function scanAndPopulateImages(imageDir) {
+// 使用静态 JSON 文件加载图像列表并填充下拉框
+function scanAndPopulateImages(imageJson) {
     const selector = document.getElementById("imageSelector");
 
-    // 使用 Node.js 的 fs 模块读取目录内容
-    const fs = require('fs');
-    const path = require('path');
+    // 请求静态 JSON 文件
+    fetch(`${imageJson}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch image list");
+            }
+            return response.json();
+        })
+        .then(imageList => {
+            // 清空下拉框现有选项
+            selector.innerHTML = "";
 
-    try {
-        // 获取图像文件列表
-        const imageList = fs.readdirSync(imageDir).filter(file => {
-            const ext = path.extname(file).toLowerCase();
-            return ['.jpg', '.jpeg', '.png', '.gif'].includes(ext); // 过滤图像文件
+            // 动态添加选项
+            imageList.forEach(imageName => {
+                const option = document.createElement("option");
+                option.value = imageName;
+                option.textContent = imageName;
+                selector.appendChild(option);
+            });
+
+            // 默认加载第一张图像
+            if (imageList.length > 0) {
+                selector.value = imageList[0];
+                updateImageSelection();
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching image list:", error);
         });
-
-        // 清空下拉框现有选项
-        selector.innerHTML = "";
-
-        // 动态添加选项
-        imageList.forEach(imageName => {
-            const option = document.createElement("option");
-            option.value = imageName;
-            option.textContent = imageName;
-            selector.appendChild(option);
-        });
-
-        // 默认加载第一张图像
-        if (imageList.length > 0) {
-            selector.value = imageList[0];
-            updateImageSelection();
-        }
-    } catch (error) {
-        console.error("Error scanning image directory:", error);
-    }
 }
 
 // 动态请求图像列表并填充下拉框
@@ -150,20 +149,20 @@ function updateImageSelection() {
     const selectedImage = selector.value;
 
     // 更新图像路径并触发重新加载
-    img.src = `results/pano/${selectedImage}`;
+    img.src = `results/pano/${selectedImage}.png`;
     console.log(`Image switched to: ${img.src}`);
 
     // 更新深度路径并触发重新加载
-    depth.src = `results/pano_depth/${selectedImage}`;
+    depth.src = `results/pano_depth/${selectedImage}.png`;
     console.log(`Depth switched to: ${depth.src}`);
 
 	// 同步更新静态框
 	const imageDisplay = document.getElementById("imageDisplay");
-    imageDisplay.src = `results/pano/${selectedImage}`;
+    imageDisplay.src = `results/pano/${selectedImage}.png`;
 
 	// 同步更新静态框
 	const depthDisplay = document.getElementById("depthDisplay");
-    depthDisplay.src = `results/pano_depth/${selectedImage}`;
+    depthDisplay.src = `results/pano_depth/${selectedImage}.png`;
 
 	// 重置相机
 	cam_heading = 90.0;

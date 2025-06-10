@@ -230,7 +230,7 @@ Training and inference framework of <span class="methodname">DreamCube</span> fo
 Results of Multi-plane Synchronization on existing pre-trained 2D diffusion models, including SD2, SDXL, and Marigold:
 </p>
           <img id="demo_sync" width="100%" src="./assets/demo_multiplane_sync.png" alt="DreamCube framework."/>
-          <h3 class="title has-text-centered">RGB-D Panorama Generation of DreamCube</h3>
+          <h3 class="title has-text-centered">RGB-D Cubemap Generation</h3>
 <p>
 Out-of-domain RGB-D panorama generation from single view inputs:
 </p>
@@ -252,9 +252,8 @@ Out-of-domain RGB-D panorama generation from single view inputs:
     <!-- Panorama Viewer -->
     <body onload="init_pano()">
       <div align="center">
-        <br>
         <!-- 动态选项将通过 JavaScript 填充 -->
-        <label for="imageSelector">Select Image (Press 'i' for more info):</label>
+        <label for="imageSelector">Select example (Press 'i' for more info):</label>
         <select id="imageSelector" onchange="updateImageSelection()">
         </select>
         <br>
@@ -267,9 +266,16 @@ Out-of-domain RGB-D panorama generation from single view inputs:
           <p>Your browser does not support the HTML5 canvas element.</p>
         </canvas>
         <br>
+        <p>
+          Free angle observation. Try using the mouse to drag and rotate the view (Left: RGB, Right: Euclidean Depth).
+        </p>
+        <br>
         <!-- 静态显示选中图片 -->
         <img id="imageDisplay" src="" alt="Selected Image" width="512">
         <img id="depthDisplay" src="" alt="Selected Depth" width="512">
+        <p>
+          Panoramic overview (Left: RGB, Right: Euclidean Depth).
+        </p>
       </div>
     </body>
   </div>
@@ -299,8 +305,7 @@ Out-of-domain RGB-D panorama generation from single view inputs:
     <div class="columns is-centered">
       <div class="column is-8">
         <div class="content">
-          <p>This website is constructed using the template provided by
-            <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          <p>This website is constructed using the template provided by <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
           </p>
         </div>
       </div>

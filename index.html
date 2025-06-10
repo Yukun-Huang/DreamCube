@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="DreamCube for RGB-D Panorama Generation from Single View">
+  <meta name="keywords" content="DreamCube, Panorama, Cubemap, Diffusion Model, Generation">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DreamCube: RGB-D Panorama Generation via Multi-plane Synchronization</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <link rel="icon" href="./assets/icon.png">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  
+  <script src="static/js/panorama.js"></script>
+
+  <!-- bulma css template -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <!-- model viewer -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
+
+</head>
+
+<body>
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          
+          <!-- Title -->
+          <h1 class="title is-size-1 publication-title">DreamCube: 3D Panorama Generation via Multi-plane Synchronization</h1>
+          <div class="title is-size-3 publication-title">
+            <span style="font-weight: bold;">Research Paper</span>
+          </div>
+          <!-- <h3 class="title has-text-centered">Technical Report</h3> -->
+
+          <!-- Author -->
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://yukun-huang.github.io">Yukun Huang</a><sup> 1</sup>&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+            <span class="author-block">
+              <a href="https://ynzhou.netlify.app">Yanning Zhou</a><sup> 2</sup>&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+            <span class="author-block">
+              <a href="https://github.com/wendyjnwang">Jianan Wang</a><sup> 3</sup>&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=dB86D_cAAAAJ">Kaiyi Huang</a><sup> 1</sup>&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+            <span class="author-block">
+              <a href="https://xh-liu.github.io">Xihui Liu</a><sup> 1</sup>
+            </span>
+          </div>
+
+          <!-- Institution -->
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1 </sup>The University of Hong Kong</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><sup>2 </sup>Tencent</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><sup>3 </sup>Astribot</span>&nbsp;&nbsp;&nbsp;&nbsp;
+          </div>
+          
+          <!-- Link Button -->
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href=""
+                    class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf" style="color: orangered"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              &nbsp;
+              <!-- Model Link. -->
+              <span class="link-block">
+                <a href="https://huggingface.co/KevinHuang/DreamCube"
+                    class="external-link button is-normal is-rounded is-dark">
+                  <span>🤗 HuggingFace</span>
+                </a>
+              </span>
+              &nbsp;
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/yukun-huang/DreamCube"
+                    class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>GitHub</span>
+                  </a>
+              </span>
+              &nbsp;
+              <!-- Demo Link. -->
+              <!-- <span class="link-block">
+                <a href="https://huggingface.co/KevinHuang/DreamCube"
+                    class="external-link button is-normal is-rounded is-dark">
+                  <span>🤗 Gradio Demo (Comming Soon)</span>
+                </a>
+              </span> -->
+            </div>
+          </div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Teaser -->
+<section class="hero teaser">
+  <div class="container ">
+    <div class="hero-body">
+      <img id="teaser" width="100%" src="./assets/teaser.png" alt="Teaser image."/>
+      <h2 class="subtitle has-text-centered">
+We introduce <span class="methodname">Multi-plane Synchronization</span> to adapt 2D diffusion models for multi-plane panoramic
+representations, which can be applied to different tasks including
+RGB-D panorama generation, panorama depth estimation, and 3D scene generation.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<!-- Abstract. -->
+<section class="section pt-0">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <!-- <div class="column" style="flex:none; width: 100%;"> -->
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Overview</h2>
+        <div class="content has-text-justified" style="font-size: 19px;">
+        <!-- style="font-size: 18px;" -->
+<p>
+We demonstrate a non-training strategy termed <span class="methodname"><b>Multi-plane Synchronization</b></span>, 
+which enables pre-trained 2D diffusion models to generate seam-continuous multi-plane panoramic representations like cube maps and sky boxes.
+This strategy works by extending the model's 2D spatial operators to the omnidirectional image domain, 
+making them omnidirectionally translation-equivalent.
+</p>
+<p>
+Based on this strategy, we further present <span class="methodname"><b>DreamCube</b></span>, 
+a diffusion model for RGB-D cube map generation from single-view input. 
+Benefiting from cube map representations and synchronization strategies, <span class="methodname">DreamCube</span> maximizes the reuse of 2D diffusion model weights, 
+achieving high-quality appearance and accurate geometry generation.
+Extensive experiments  the effectiveness of our approach in panoramic image generation, panoramic depth estimation, and 3D scene generation.
+</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <span class="methodname"></span> -->
+
+<!-- News. -->
+<section class="section pt-0">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">What's New</h2>
+        <div class="content has-text-justified">
+          <span style="font-size: 18px;">📢 2025-06: Paper and project page released!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Method -->
+<section class="section pt-0">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Methodology</h2>
+        <div class="content has-text-justified">
+          <h3 class="title has-text-centered">Multi-plane Synchronization</h3>
+<p>
+  Synchronizing different spatial operators (attentions, 2d convs, group norms) of diffusion U-Net and VAE enables seam-continuous cube map generation without fine-tuning.
+</p>
+          <img id="method_sync" width="100%" src="./assets/multiplane_sync.png" alt="DreamCube framework."/>
+          <h3 class="title has-text-centered">DreamCube: An RGB-D Cubemap Generation Framework</h3>
+<p>
+Training and inference framework of <span class="methodname">DreamCube</span> for RGB-D cube map generation:
+</p>
+          <img id="method_dreamcube" width="100%" src="./assets/dreamcube.png" alt="DreamCube framework."/>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Versatility -->
+<section class="section pt-0">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Results</h2>
+        <div class="content has-text-justified">
+          <h3 class="title has-text-centered">Versatility of Multi-plane Synchronization</h3>
+<p>
+Results of Multi-plane Synchronization on existing pre-trained 2D diffusion models, including SD2, SDXL, and Marigold:
+</p>
+          <img id="demo_sync" width="100%" src="./assets/demo_multiplane_sync.png" alt="DreamCube framework."/>
+          <h3 class="title has-text-centered">RGB-D Panorama Generation of DreamCube</h3>
+<p>
+Out-of-domain RGB-D panorama generation from single view inputs:
+</p>
+                    <img id="demo_dreamcube" width="100%" src="./assets/demo_dreamcube_ood.png" alt="DreamCube framework."/>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Visualization -->
+<section class="section pt-0">
+  <div class="container is-centered">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Interactive Demo</h2>
+      </div>
+    </div>
+    <!-- Panorama Viewer -->
+    <body onload="init_pano()">
+      <div align="center">
+        <br>
+        <!-- 动态选项将通过 JavaScript 填充 -->
+        <label for="imageSelector">Select Image (Press 'i' for more info):</label>
+        <select id="imageSelector" onchange="updateImageSelection()">
+        </select>
+        <br>
+        <br>
+        <!-- 动态显示选中图片 -->
+        <canvas id="canvas" width="512" height="512">
+          <p>Your browser does not support the HTML5 canvas element.</p>
+        </canvas>
+        <canvas id="depth_canvas" width="512" height="512">
+          <p>Your browser does not support the HTML5 canvas element.</p>
+        </canvas>
+        <br>
+        <!-- 静态显示选中图片 -->
+        <img id="imageDisplay" src="" alt="Selected Image" width="512">
+        <img id="depthDisplay" src="" alt="Selected Depth" width="512">
+      </div>
+    </body>
+  </div>
+</section>
+
+<section class="section pt-0" id="BibTeX">
+<div class="container is-max-desktop content">
+<h2 class="title">BibTeX</h2>
+<pre>
+<code style="font-size: 15px;">@article{huang2025dreamcube,
+  title={{DreamCube: RGB-D Panorama Generation via Multi-plane Synchronization}},
+  author={Huang, Yukun and Zhou, Yanning and Wang, Jianan and Huang, Kaiyi and Liu, Xihui},
+  year={2025},
+  eprint={},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV},
+}
+</code>
+</pre>
+</div>
+</section>
+
+</body>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>This website is constructed using the template provided by
+            <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</html>

@@ -69,7 +69,44 @@ function init_pano(){
 	depth_canvas.onmousedown = mouseDown;
 	depth_canvas.onmousewheel = mouseScroll;
     // 初始化下拉框选项
-	fetchAndPopulateImages();
+	// fetchAndPopulateImages();
+	scanAndPopulateImages("./results/pano/");
+}
+
+// 直接扫描指定的图像路径并填充下拉框
+function scanAndPopulateImages(imageDir) {
+    const selector = document.getElementById("imageSelector");
+
+    // 使用 Node.js 的 fs 模块读取目录内容
+    const fs = require('fs');
+    const path = require('path');
+
+    try {
+        // 获取图像文件列表
+        const imageList = fs.readdirSync(imageDir).filter(file => {
+            const ext = path.extname(file).toLowerCase();
+            return ['.jpg', '.jpeg', '.png', '.gif'].includes(ext); // 过滤图像文件
+        });
+
+        // 清空下拉框现有选项
+        selector.innerHTML = "";
+
+        // 动态添加选项
+        imageList.forEach(imageName => {
+            const option = document.createElement("option");
+            option.value = imageName;
+            option.textContent = imageName;
+            selector.appendChild(option);
+        });
+
+        // 默认加载第一张图像
+        if (imageList.length > 0) {
+            selector.value = imageList[0];
+            updateImageSelection();
+        }
+    } catch (error) {
+        console.error("Error scanning image directory:", error);
+    }
 }
 
 // 动态请求图像列表并填充下拉框

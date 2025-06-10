@@ -70,7 +70,7 @@ function init_pano(){
 	depth_canvas.onmousewheel = mouseScroll;
     // 初始化下拉框选项
 	// fetchAndPopulateImages();
-	scanAndPopulateImages("./results/pano/");
+	scanAndPopulateImages("/results/pano/");
 }
 
 // 直接扫描指定的图像路径并填充下拉框
@@ -150,20 +150,20 @@ function updateImageSelection() {
     const selectedImage = selector.value;
 
     // 更新图像路径并触发重新加载
-    img.src = `./results/pano/${selectedImage}`;
+    img.src = `/results/pano/${selectedImage}`;
     console.log(`Image switched to: ${img.src}`);
 
     // 更新深度路径并触发重新加载
-    depth.src = `./results/pano_depth/${selectedImage}`;
+    depth.src = `/results/pano_depth/${selectedImage}`;
     console.log(`Depth switched to: ${depth.src}`);
 
 	// 同步更新静态框
 	const imageDisplay = document.getElementById("imageDisplay");
-    imageDisplay.src = `./results/pano/${selectedImage}`;
+    imageDisplay.src = `/results/pano/${selectedImage}`;
 
 	// 同步更新静态框
 	const depthDisplay = document.getElementById("depthDisplay");
-    depthDisplay.src = `./results/pano_depth/${selectedImage}`;
+    depthDisplay.src = `/results/pano_depth/${selectedImage}`;
 
 	// 重置相机
 	cam_heading = 90.0;

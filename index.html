@@ -263,17 +263,23 @@ RGB-D panorama generation, panorama depth estimation, and 3D scene generation.
 
 <!-- Visualization -->
 <section class="section pt-0">
-  <div class="container is-centered">
+  <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
+      <div class="column">
         <h2 class="title is-3" style="font-family: Arial;">Interactive Demo</h2>
+      <div class="content has-text-justified" style="font-family: Arial; font-size: 20px;">
+        <p>
+          We provide an interactive demo for free-view observation of the generated RGB-D panoramas. Try using the mouse to drag and rotate the view. Please note that we also provide a <a href="https://github.com/yukun-huang/DreamCube">Gradio demo</a> which further integrates Pano-to-3D scene reconstruction and free exploration.
+        </p>
+      </div>
       </div>
     </div>
-    <!-- Panorama Viewer -->
+  </div>
+  <!-- Panorama Viewer -->
     <body onload="init_pano()">
       <div align="center">
         <!-- 动态选项将通过 JavaScript 填充 -->
-        <label for="imageSelector"><div class="content" style="font-family: Arial; font-size: 20px;">Select example (Press 'i' for more info):</div></label>
+        <label for="imageSelector"><div class="content" style="font-family: Arial; font-size: 20px;"><b>Select example (Press 'i' for more info):</b></div></label>
         <select id="imageSelector" onchange="updateImageSelection()">
         </select>
         <br>
@@ -286,15 +292,13 @@ RGB-D panorama generation, panorama depth estimation, and 3D scene generation.
           <p>Your browser does not support the HTML5 canvas element.</p>
         </canvas>
         <br>
-        <div class="content" style="font-family: Arial; font-size: 20px;"><p>Free angle observation. Try using the mouse to drag and rotate the view (Left: RGB, Right: Euclidean Depth).</p></div>
-        <br>
+        <div class="content" style="font-family: Arial; font-size: 20px;"><p>Free angle observation (Left: RGB, Right: Euclidean Depth).</p></div>
         <!-- 静态显示选中图片 -->
         <img id="imageDisplay" src="" alt="Selected Image" width="512">
         <img id="depthDisplay" src="" alt="Selected Depth" width="512">
         <div class="content" style="font-family: Arial; font-size: 20px;"><p>Panoramic overview (Left: RGB, Right: Euclidean Depth).</p></div>
       </div>
     </body>
-  </div>
 </section>
 
 <section class="section pt-0" id="BibTeX">

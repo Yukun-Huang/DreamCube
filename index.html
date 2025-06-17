@@ -96,7 +96,7 @@
                 <a href=""
                     class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
-                      <i class="fas fa-file-pdf" style="color: orangered"></i>
+                      <i class="ai ai-arxiv"></i>
                   </span>
                   <span>Paper</span>
                 </a>
@@ -106,7 +106,10 @@
               <span class="link-block">
                 <a href="https://huggingface.co/KevinHuang/DreamCube"
                     class="external-link button is-normal is-rounded is-dark">
-                  <span>🤗 HuggingFace</span>
+                  <span class="icon">
+                    <i class="far fa-file"></i>
+                  </span>
+                  <span>Model</span>
                 </a>
               </span>
               &nbsp;
@@ -117,7 +120,18 @@
                   <span class="icon">
                       <i class="fab fa-github"></i>
                   </span>
-                  <span>GitHub</span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              &nbsp;
+              <!-- Video Link. -->
+              <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=7x4Elc2tO6g"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
                   </a>
               </span>
               &nbsp;
@@ -143,8 +157,7 @@
     <div class="hero-body">
       <img id="teaser" width="100%" src="./assets/teaser.png" alt="Teaser image."/>
       <h2 class="subtitle has-text-centered">
-We introduce <span class="methodname">Multi-plane Synchronization</span> to adapt 2D diffusion models for multi-plane panoramic
-representations, which can be applied to different tasks including
+We introduce <b>Multi-plane Synchronization</b> to adapt 2D diffusion models for multi-plane panoramic representations (i.e., cubemaps), which facilitates different tasks including
 RGB-D panorama generation, panorama depth estimation, and 3D scene generation.
       </h2>
     </div>
@@ -157,21 +170,10 @@ RGB-D panorama generation, panorama depth estimation, and 3D scene generation.
     <div class="columns is-centered has-text-centered">
       <!-- <div class="column" style="flex:none; width: 100%;"> -->
       <div class="column is-four-fifths">
-        <h2 class="title is-3">Overview</h2>
-        <div class="content has-text-justified" style="font-size: 19px;">
-        <!-- style="font-size: 18px;" -->
+        <h2 class="title is-3" style="font-family: Arial;">Abstract</h2>
+        <div class="content has-text-justified" style="font-family: Arial; font-size: 20px;">
 <p>
-We demonstrate a non-training strategy termed <span class="methodname"><b>Multi-plane Synchronization</b></span>, 
-which enables pre-trained 2D diffusion models to generate seam-continuous multi-plane panoramic representations like cube maps and sky boxes.
-This strategy works by extending the model's 2D spatial operators to the omnidirectional image domain, 
-making them omnidirectionally translation-equivalent.
-</p>
-<p>
-Based on this strategy, we further present <span class="methodname"><b>DreamCube</b></span>, 
-a diffusion model for RGB-D cube map generation from single-view input. 
-Benefiting from cube map representations and synchronization strategies, <span class="methodname">DreamCube</span> maximizes the reuse of 2D diffusion model weights, 
-achieving high-quality appearance and accurate geometry generation.
-Extensive experiments  the effectiveness of our approach in panoramic image generation, panoramic depth estimation, and 3D scene generation.
+  3D panorama synthesis is a promising yet challenging task that demands high-quality and diverse visual appearance and geometry of the generated omnidirectional content. Existing methods leverage rich image priors from pre-trained 2D foundation models to circumvent the scarcity of 3D panoramic data, but the incompatibility between 3D panoramas and 2D single views limits their effectiveness. In this work, we demonstrate that by applying <b>Multi-plane Synchronization</b> to the operators from 2D foundation models, their capabilities can be seamlessly extended to the omnidirectional domain. Based on this design, we further introduce <b>DreamCube</b>, a multi-plane RGB-D diffusion model for 3D panorama generation, which maximizes the reuse of 2D foundation model priors to achieve diverse appearances and accurate geometry while maintaining multi-view consistency. Extensive experiments demonstrate the effectiveness of our approach in panoramic image generation, panoramic depth estimation, and 3D scene generation.
 </p>
         </div>
       </div>
@@ -179,16 +181,54 @@ Extensive experiments  the effectiveness of our approach in panoramic image gene
   </div>
 </section>
 
-<!-- <span class="methodname"></span> -->
+<section class="section pt-0">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3" style="font-family: Arial;">Video</h2>
+        <div class="publication-video">
+          <iframe src="https://www.youtube.com/embed/7x4Elc2tO6g?rel=0&amp;showinfo=0"
+                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- News. -->
 <section class="section pt-0">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">What's New</h2>
+      <div class="column">
+        <h2 class="title is-3" style="font-family: Arial;">What's New</h2>
         <div class="content has-text-justified">
-          <span style="font-size: 18px;">📢 2025-06: Paper and project page released!</span>
+          <span style="font-family: Bold; font-size: 20px;">📢 2025-06: Release <a href="https://yukun-huang.github.io/DreamCube/">website</a>, <a href="">paper</a>, <a href="https://github.com/Yukun-Huang/DreamCube">inference code</a>, and <a href="https://huggingface.co/KevinHuang/DreamCube">model weights</a>!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Multi-plane Synchronization -->
+<section class="section pt-0">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3" style="font-family: Arial;">Multi-plane Synchronization</h2>
+        <div class="content has-text-justified" style="font-family: Arial; font-size: 20px;">
+<p>
+  <b>Multi-plane Synchronization</b> synchronizes different 2D spatial operators (attentions, 2d convs, group norms, etc.) to multi-plane panoramic representation, enabling seam-continuous cubemap processing.
+</p>
+<video id="method_video" width="100%" controls autoplay loop muted playsinline>
+  <source src="./assets/multiplane_sync.mp4" type="video/mp4">
+</video>
+<p>
+  <br>
+  The proposed <b>Multi-plane Synchronization</b> is general and can be applied to various 2D diffusion models (e.g., SDXL, Marigold, VideoCrafter2) for both panorama generation and preception tasks:
+</p>
+<video id="method_video" width="100%" controls autoplay loop muted playsinline>
+  <source src="./assets/multiplane_sync_demo.mp4" type="video/mp4">
+</video>
         </div>
       </div>
     </div>
@@ -199,42 +239,22 @@ Extensive experiments  the effectiveness of our approach in panoramic image gene
 <section class="section pt-0">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Methodology</h2>
-        <div class="content has-text-justified">
-          <h3 class="title has-text-centered">Multi-plane Synchronization</h3>
-<p>
-  Synchronizing different spatial operators (attentions, 2d convs, group norms) of diffusion U-Net and VAE enables seam-continuous cube map generation without fine-tuning.
-</p>
-          <img id="method_sync" width="100%" src="./assets/multiplane_sync.png" alt="DreamCube framework."/>
-          <h3 class="title has-text-centered">DreamCube: An RGB-D Cubemap Generation Framework</h3>
-<p>
-Training and inference framework of <span class="methodname">DreamCube</span> for RGB-D cube map generation:
-</p>
-          <img id="method_dreamcube" width="100%" src="./assets/dreamcube.png" alt="DreamCube framework."/>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Versatility -->
-<section class="section pt-0">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
       <div class="column">
-        <h2 class="title is-3">Results</h2>
-        <div class="content has-text-justified">
-          <h3 class="title has-text-centered">Versatility of Multi-plane Synchronization</h3>
+        <h2 class="title is-3" style="font-family: Arial;">DreamCube: RGB-D Cubemap Generation</h2>
+        <div class="content has-text-justified" style="font-family: Arial; font-size: 20px;">
 <p>
-Results of Multi-plane Synchronization on existing pre-trained 2D diffusion models, including SD2, SDXL, and Marigold:
+  Based on Multi-plane Synchronization, we further introduce <b>DreamCube</b>, a diffusion-based framework for RGB-D cubemap generation from single-view RGB-D inputs and multi-view text prompts.
 </p>
-          <img id="demo_sync" width="100%" src="./assets/demo_multiplane_sync.png" alt="DreamCube framework."/>
-          <h3 class="title has-text-centered">RGB-D Cubemap Generation</h3>
+<video id="method_video" width="100%" controls autoplay loop muted playsinline>
+  <source src="./assets/dreamcube.mp4" type="video/mp4">
+</video>
 <p>
-Out-of-domain RGB-D panorama generation from single view inputs:
+  <br>
+  <b>DreamCube</b> can generate RGB-D cubemaps from both in-domain and synthetic out-domain inputs.
 </p>
-          <img id="demo_dreamcube" width="100%" src="./assets/demo_dreamcube_ood.png" alt="DreamCube framework."/>
+<video id="method_video" width="100%" controls autoplay loop muted playsinline>
+  <source src="./assets/dreamcube_demo.mp4" type="video/mp4">
+</video>
         </div>
       </div>
     </div>
@@ -246,14 +266,14 @@ Out-of-domain RGB-D panorama generation from single view inputs:
   <div class="container is-centered">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3">Interactive Demo</h2>
+        <h2 class="title is-3" style="font-family: Arial;">Interactive Demo</h2>
       </div>
     </div>
     <!-- Panorama Viewer -->
     <body onload="init_pano()">
       <div align="center">
         <!-- 动态选项将通过 JavaScript 填充 -->
-        <label for="imageSelector">Select example (Press 'i' for more info):</label>
+        <label for="imageSelector"><div class="content" style="font-family: Arial; font-size: 20px;">Select example (Press 'i' for more info):</div></label>
         <select id="imageSelector" onchange="updateImageSelection()">
         </select>
         <br>
@@ -266,16 +286,12 @@ Out-of-domain RGB-D panorama generation from single view inputs:
           <p>Your browser does not support the HTML5 canvas element.</p>
         </canvas>
         <br>
-        <p>
-          Free angle observation. Try using the mouse to drag and rotate the view (Left: RGB, Right: Euclidean Depth).
-        </p>
+        <div class="content" style="font-family: Arial; font-size: 20px;"><p>Free angle observation. Try using the mouse to drag and rotate the view (Left: RGB, Right: Euclidean Depth).</p></div>
         <br>
         <!-- 静态显示选中图片 -->
         <img id="imageDisplay" src="" alt="Selected Image" width="512">
         <img id="depthDisplay" src="" alt="Selected Depth" width="512">
-        <p>
-          Panoramic overview (Left: RGB, Right: Euclidean Depth).
-        </p>
+        <div class="content" style="font-family: Arial; font-size: 20px;"><p>Panoramic overview (Left: RGB, Right: Euclidean Depth).</p></div>
       </div>
     </body>
   </div>
@@ -285,7 +301,7 @@ Out-of-domain RGB-D panorama generation from single view inputs:
 <div class="container is-max-desktop content">
 <h2 class="title">BibTeX</h2>
 <pre>
-<code style="font-size: 15px;">@article{huang2025dreamcube,
+<code style="font-size: 18px;">@article{huang2025dreamcube,
   title={{DreamCube: RGB-D Panorama Generation via Multi-plane Synchronization}},
   author={Huang, Yukun and Zhou, Yanning and Wang, Jianan and Huang, Kaiyi and Liu, Xihui},
   year={2025},
@@ -304,7 +320,7 @@ Out-of-domain RGB-D panorama generation from single view inputs:
   <div class="container">
     <div class="columns is-centered">
       <div class="column is-8">
-        <div class="content">
+        <div class="content" style="font-size: 18px;">
           <p>This website is constructed using the template provided by <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
           </p>
         </div>

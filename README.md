@@ -21,7 +21,7 @@ Based on this design, we further introduce <b>DreamCube</b>, a diffusion-based f
 ## 📢 News
 - [2025-07-10] Add a Jupyter notebook for quickly trying Multi-plane Synchronization.
 - [2025-06-26] Accepted to ICCV 2025!
-- [2025-06-21] Release [project page](https://yukun-huang.github.io/DreamCube/), [model weights](https://huggingface.co/KevinHuang/DreamCube), and [inference code](https://github.com/Yukun-Huang/DreamCube) .
+- [2025-06-21] Release [project page](https://yukun-huang.github.io/DreamCube/), [model weights](https://huggingface.co/KevinHuang/DreamCube), and [inference code](https://github.com/Yukun-Huang/DreamCube).
 
 ## ⚙️ Setup
 Please refer to `requirements.txt`.

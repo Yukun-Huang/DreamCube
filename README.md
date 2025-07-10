@@ -27,9 +27,8 @@ Based on this design, we further introduce <b>DreamCube</b>, a diffusion-based f
 Please refer to `requirements.txt`.
 
 ## 💃🏻 Multi-plane Synchronization
-If you are only interested in Multi-plane Synchronization, we provide a Jupyter notebook for quickly trying Multi-plane Synchronization on pre-trained diffusion models like SD2, SDXL, and Marigold.
+If you are only interested in Multi-plane Synchronization, we provide a Jupyter notebook `multi_plane_sync.ipynb` for quickly trying Multi-plane Synchronization on pre-trained diffusion models like SD2, SDXL, and Marigold.
 
-Please refer to `multi_plane_sync.ipynb` for more details.
 The code implementation is very simple. The key lines are as follows:
 ```python
 pipe = StableDiffusionPipeline.from_pretrained(...)

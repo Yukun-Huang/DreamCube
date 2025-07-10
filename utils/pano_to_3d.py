@@ -395,6 +395,125 @@ def convert_rgbd_equi_to_3dgs(
     return splats
 
 
+def convert_rgbd_equi_to_pcd(
+    rgb: torch.Tensor,                       # (H, W, 3) RGB image
+    distance: torch.Tensor,                  # (H, W) Distance map
+    rays: Optional[torch.Tensor] = None,     # (H, W, 3) Ray directions (unit vectors ideally)
+    mask: Optional[torch.Tensor] = None,     # (H, W) Optional boolean mask
+    max_size: Optional[int] = None,          # Max dimension for resizing
+    device: Optional[Literal["cuda", "cpu"]] = None, # Computation device
+    save_path: Optional[str] = None,
+) -> o3d.geometry.TriangleMesh:
+    """
+    Converts panoramic RGBD data (image, distance, rays) into an Open3D mesh.
+
+    Args:
+        image: Input RGB image tensor (H, W, 3), uint8 or float [0, 255].
+        distance: Input distance map tensor (H, W).
+        rays: Input ray directions tensor (H, W, 3). Assumed to originate from (0,0,0).
+        mask: Optional boolean mask tensor (H, W). True values indicate regions to potentially exclude.
+        max_size: Maximum size (height or width) to resize inputs to.
+        device: The torch device ('cuda' or 'cpu') to use for computations.
+
+    Returns:
+        An Open3D TriangleMesh object.
+    """
+    assert rgb.ndim == 3 and rgb.shape[2] == 3, "Image must be HxWx3"
+    assert distance.ndim == 2, "Distance must be HxW"
+    assert rgb.shape[:2] == distance.shape[:2], "Input shapes must match"
+    if rays is not None:
+        assert rgb.shape[:2] == rays.shape[:2], "Input shapes must match"
+        assert rays.ndim == 3 and rays.shape[2] == 3, "Rays must be HxWx3"
+    if mask is not None:
+        assert mask.ndim == 2 and mask.shape[:2] == rgb.shape[:2], "Mask shape must match"
+        assert mask.dtype == torch.bool, "Mask must be a boolean tensor"
+
+    if device is None:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+    
+    rgb = rgb.to(device)
+    distance = distance.to(device)
+    
+    if rays is None:
+        rays = equi_unit_rays(rgb.shape[0], rgb.shape[1], device)
+    rays = rays.to(device)
+    
+    if mask is not None:
+        mask = mask.to(device)
+
+    H, W = distance.shape
+    if max_size is not None and max(H, W) > max_size:
+        scale = max_size / max(H, W)
+    else:
+        scale = 1.0
+
+    rgb_nchw = rgb.permute(2, 0, 1).unsqueeze(0)
+    distance_nchw = distance.unsqueeze(0).unsqueeze(0)
+    rays_nchw = rays.permute(2, 0, 1).unsqueeze(0)
+
+    rgb_nchw = rgb_nchw / 255.0  # Normalize RGB to [0, 1]
+
+    rgb_resized = F.interpolate(
+        rgb_nchw,
+        scale_factor=scale,
+        mode="bilinear",
+        align_corners=False,
+        recompute_scale_factor=False
+    ).squeeze(0).permute(1, 2, 0)
+
+    distance_resized = F.interpolate(
+        distance_nchw,
+        scale_factor=scale,
+        mode="bilinear",
+        align_corners=False,
+        recompute_scale_factor=False
+    ).squeeze(0).squeeze(0)
+
+    rays_resized_nchw = F.interpolate(
+        rays_nchw,
+        scale_factor=scale,
+        mode="bilinear",
+        align_corners=False,
+        recompute_scale_factor=False
+    )
+    
+    # IMPORTANT: Renormalize ray directions after interpolation
+    rays_resized = rays_resized_nchw.squeeze(0).permute(1, 2, 0)
+    rays_norm = torch.linalg.norm(rays_resized, dim=-1, keepdim=True)
+    rays_resized = rays_resized / (rays_norm + 1e-8)
+
+    if mask is not None:
+        mask_resized = F.interpolate(
+            mask.unsqueeze(0).unsqueeze(0).float(), # Needs float for interpolation
+            scale_factor=scale,
+            mode="bilinear", # Or 'nearest' if sharp boundaries are critical
+            align_corners=False,
+            recompute_scale_factor=False
+        ).squeeze(0).squeeze(0)
+        mask_resized = mask_resized > 0.5 # Convert back to boolean
+    else:
+        mask_resized = None
+
+    H_new, W_new = distance_resized.shape # Get new dimensions
+
+    # --- Calculate 3D Vertices ---
+    # Vertex position = origin + distance * ray_direction
+    # Assuming origin is (0, 0, 0)
+    distance_flat = distance_resized.reshape(-1, 1)     # (H*W, 1)
+    rays_flat = rays_resized.reshape(-1, 3)             # (H*W, 3)
+    points = distance_flat * rays_flat                # (H*W, 3)
+    colors = rgb_resized.reshape(-1, 3)  # (H*W, 3)
+
+    pcd_o3d = o3d.geometry.PointCloud()
+    pcd_o3d.points = o3d.utility.Vector3dVector(points.cpu().numpy())
+    pcd_o3d.colors = o3d.utility.Vector3dVector(colors.cpu().numpy())  # 设置颜色（确保颜色值在[0, 1]之间）
+
+    if save_path is not None:
+        o3d.io.write_point_cloud(save_path, pcd_o3d)
+
+    return pcd_o3d
+
+
 # Cubemap-to-3D
 def generate_cubemap_triangles(H: int, W: int) -> torch.Tensor:
     """
@@ -821,3 +940,116 @@ def convert_rgbd_cube_to_3dgs(
         )
     
     return splats
+
+
+def convert_rgbd_cube_to_pcd(
+    rgb: torch.Tensor,                       # (M, H, W, 3) RGB image, [0, 255]
+    distance: torch.Tensor,                  # (M, H, W) Distance map
+    rays: Optional[torch.Tensor] = None,     # (M, H, W, 3) Ray directions (unit vectors ideally)
+    mask: Optional[torch.Tensor] = None,     # (M, H, W) Optional boolean mask
+    max_size: Optional[int] = None,          # Max dimension for resizing
+    device: Optional[Literal["cuda", "cpu"]] = None, # Computation device
+    save_path: Optional[str] = None,
+) -> o3d.geometry.PointCloud:
+    """
+    Converts panoramic RGBD data (image, distance, rays) into an Open3D mesh.
+
+    Args:
+        rgb: Input RGB image tensor (M, H, W, 3), uint8 or float, [0, 255].
+        distance: Input distance map tensor (M, H, W), meters.
+        rays: Input ray directions tensor (M, H, W, 3). Assumed to originate from (0, 0, 0).
+        mask: Optional boolean mask tensor (M, H, W). True values indicate regions to potentially exclude.
+        max_size: Maximum size (height or width) to resize inputs to.
+        device: The torch device ('cuda' or 'cpu') to use for computations.
+
+    Returns:
+        An Open3D TriangleMesh object.
+    """
+    assert rgb.ndim == 4 and rgb.shape[-1] == 3, "Image must be MxHxWx3"
+    assert distance.ndim == 3, "Distance must be MxHxW"
+    assert rgb.shape[:3] == distance.shape[:3], "Input shapes must match"
+    assert rgb.shape[1] == rgb.shape[2], "Input image must be square (HxH)"
+    if rays is not None:
+        assert rgb.shape[:3] == rays.shape[:3], "Input shapes must match"
+        assert rays.ndim == 4 and rays.shape[-1] == 3, "Rays must be MxHxWx3"
+    if mask is not None:
+        assert mask.ndim == 3 and mask.shape[:3] == rgb.shape[:3], "Mask shape must match"
+        assert mask.dtype == torch.bool, "Mask must be a boolean tensor"
+
+    if device is None:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+    
+    rgb = rgb.to(device)
+    distance = distance.to(device)
+    
+    if mask is not None:
+        mask = mask.to(device)
+
+    _, H, W = distance.shape
+    if max_size is not None and max(H, W) > max_size:
+        scale = max_size / max(H, W)
+    else:
+        scale = 1.0
+
+    rgb = rgb / 255.0  # Normalize RGB to [0, 1]
+
+    rgb = F.interpolate(
+        rearrange(rgb, 'm h w c -> m c h w'),
+        scale_factor=scale,
+        mode="bilinear",
+        align_corners=False,
+        recompute_scale_factor=False,
+    )
+    rgb = rearrange(rgb, 'm c h w -> m h w c')
+
+    distance = F.interpolate(
+        rearrange(distance, 'm h w -> m 1 h w'),
+        scale_factor=scale,
+        mode="bilinear",
+        align_corners=False,
+        recompute_scale_factor=False
+    )
+    distance = rearrange(distance, 'm 1 h w -> m h w')
+
+    if rays is None:
+        rays = cube_unit_rays(rgb.shape[1], rgb.shape[2], device)
+    else:
+        rays = rays.to(device)
+        rays = F.interpolate(
+            rearrange(rays, 'm h w c -> m c h w'),
+            scale_factor=scale,
+            mode="bilinear",
+            align_corners=False,
+            recompute_scale_factor=False,
+        )
+        rays = rearrange(rays, 'm c h w -> m h w c')
+        # IMPORTANT: Renormalize ray directions after interpolation
+        rays_norm = torch.linalg.norm(rays, dim=-1, keepdim=True)
+        rays = rays / (rays_norm + 1e-8)
+    
+    if mask is not None:
+        mask = F.interpolate(
+            mask.unsqueeze(1).float(), # Needs float for interpolation
+            scale_factor=scale,
+            mode="bilinear", # Or 'nearest' if sharp boundaries are critical
+            align_corners=False,
+            recompute_scale_factor=False
+        ).squeeze(1)
+        mask = mask > 0.5 # Convert back to boolean
+
+    # --- Calculate 3D Vertices ---
+    # Vertex position = origin + distance * ray_direction
+    # Assuming origin is (0, 0, 0)
+    distance_flat = distance.reshape(-1, 1)     # (M*H*W, 1)
+    rays_flat = rays.reshape(-1, 3)             # (M*H*W, 3)
+    points = distance_flat * rays_flat        # (M*H*W, 3)
+    colors = rgb.reshape(-1, 3)          # (M*H*W, 3)
+
+    pcd_o3d = o3d.geometry.PointCloud()
+    pcd_o3d.points = o3d.utility.Vector3dVector(points.cpu().numpy())
+    pcd_o3d.colors = o3d.utility.Vector3dVector(colors.cpu().numpy())  # 设置颜色（确保颜色值在[0, 1]之间）
+
+    if save_path is not None:
+        o3d.io.write_point_cloud(save_path, pcd_o3d)
+
+    return pcd_o3d

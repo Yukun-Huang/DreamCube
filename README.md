@@ -19,13 +19,27 @@ Based on this design, we further introduce <b>DreamCube</b>, a diffusion-based f
 </p>
 
 ## 📢 News
-- [2025-06] 📢 Release [project page](https://yukun-huang.github.io/DreamCube/), [model weights](https://huggingface.co/KevinHuang/DreamCube), and [inference code](https://github.com/Yukun-Huang/DreamCube).
+- [2025-07-10] Add a Jupyter notebook for quickly trying Multi-plane Synchronization.
+- [2025-06-26] Accepted to ICCV 2025!
+- [2025-06-21] Release [project page](https://yukun-huang.github.io/DreamCube/), [model weights](https://huggingface.co/KevinHuang/DreamCube), and [inference code](https://github.com/Yukun-Huang/DreamCube) .
 
 ## ⚙️ Setup
 Please refer to `requirements.txt`.
 
-## 🕺 Inference
+## 💃🏻 Multi-plane Synchronization
+If you are only interested in Multi-plane Synchronization, we provide a Jupyter notebook for quickly trying out Multi-plane Synchronization for pre-trained diffusion models like SD2, SDXL, and Marigold. Please open `multi_plane_sync.ipynb` for more details.
+The actual changes are very simple, and the key code is as follows:
+```python
+pipe = StableDiffusionPipeline.from_pretrained(...)
+apply_custom_processors_for_unet(pipe.unet, enable_sync_self_attn=True, enable_sync_cross_attn=False, enable_sync_conv2d=True, enable_sync_gn=True)
+apply_custom_processors_for_vae(pipe.vae, enable_sync_attn=True, enable_sync_gn=True, enable_sync_conv2d=True)
+```
+
+## 🕺 DreamCube Inference
 We provide inference scripts for generating RGB-D cubemaps and 3D scenes (both mesh and 3dgs) from single-view inputs. The trained model weights are automatically downloaded from [HuggingFace](https://huggingface.co/KevinHuang/DreamCube).
+<p align="middle">
+<img src="assets/notebook_snapshot.png" width="100%">
+</p>
 
 ### - Using the Gradio Interface
 ```bash

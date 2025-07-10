@@ -28,7 +28,8 @@ Please refer to `requirements.txt`.
 
 ## 💃🏻 Multi-plane Synchronization
 If you are only interested in Multi-plane Synchronization, we provide a Jupyter notebook for quickly trying out Multi-plane Synchronization for pre-trained diffusion models like SD2, SDXL, and Marigold. Please open `multi_plane_sync.ipynb` for more details.
-The actual changes are very simple, and the key code is as follows:
+
+The implementation is very simple. The key lines are as follows:
 ```python
 pipe = StableDiffusionPipeline.from_pretrained(...)
 apply_custom_processors_for_unet(pipe.unet, enable_sync_self_attn=True, enable_sync_cross_attn=False, enable_sync_conv2d=True, enable_sync_gn=True)

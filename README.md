@@ -39,7 +39,7 @@ apply_custom_processors_for_vae(pipe.vae, enable_sync_attn=True, enable_sync_gn=
 <img src="assets/notebook_snapshot.png" width="100%">
 </p>
 
-## 🕺 DreamCube Inference
+## 🕺 DreamCube - Inference
 We provide inference scripts for generating RGB-D cubemaps and 3D scenes (both mesh and 3dgs) from single-view inputs. The trained model weights are automatically downloaded from [HuggingFace](https://huggingface.co/KevinHuang/DreamCube).
 
 ### - Using the Gradio Interface

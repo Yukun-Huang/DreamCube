@@ -64,7 +64,7 @@ This repository is based on many amazing research works and open-source projects
 If you find this repository helpful for your work, please consider citing it as follows:
 ```bib
 @article{huang2025dreamcube,
-  title={{DreamCube: RGB-D Panorama Generation via Multi-plane Synchronization}},
+  title={{DreamCube: 3D Panorama Generation via Multi-plane Synchronization}},
   author={Huang, Yukun and Zhou, Yanning and Wang, Jianan and Huang, Kaiyi and Liu, Xihui},
   year={2025},
   eprint={arXiv preprint arXiv:2506.17206},

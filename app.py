@@ -12,7 +12,7 @@ from models.dreamcube import DreamCubeDepthPipeline
 from models.multiplane_sync import apply_custom_processors_for_vae, apply_custom_processors_for_unet
 
 from utils.cube import Cubemap
-from utils.depth import z_distance_to_depth, DepthVisualizer
+from utils.depth import z_distance_to_depth, depth_to_z_distance, DepthVisualizer
 from utils.pano_to_3d import convert_rgbd_equi_to_3dgs, convert_rgbd_equi_to_mesh, convert_rgbd_cube_to_3dgs, convert_rgbd_cube_to_mesh
 
 PANO_TO_3D_MODES = ('3D from RGB-D Cubemap', '3D from RGB-D Equirectangular')
@@ -201,6 +201,11 @@ def prepare_inputs(
     if depth.size[0] != width or depth.size[1] != height:
         depth = depth.resize((width, height))
     depth = np.asarray(depth, dtype=np.float32)
+
+    # To Z-Axis Depth
+    depth = rearrange(depth, 'h w -> 1 h w 1')
+    depth = depth_to_z_distance(depth, fov_x=90.0,fov_y=90.0)
+    depth = rearrange(depth, '1 h w 1 -> h w')
     
     # To Tensor
     cube_rgbs = repeat(torch.from_numpy(image).to(device), 'h w c -> 1 m c h w', m=6)

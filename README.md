@@ -39,6 +39,7 @@ apply_custom_processors_for_vae(pipe.vae, enable_sync_attn=True, enable_sync_gn=
 <p align="middle">
 <img src="assets/notebook_snapshot.png" width="100%">
 </p>
+
 More implementations (SANA, Lotus, and VideoCrafter 2) can be found in `notebooks/`.
 
 ## 🕺 DreamCube - Inference

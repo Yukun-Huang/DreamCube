@@ -66,7 +66,7 @@ This repository is based on many amazing research works and open-source projects
 ## 😉 Citation
 If you find this repository helpful for your work, please consider citing it as follows:
 ```bib
-@InProceedings{dreamcube,
+@inproceedings{dreamcube,
     title     = {{DreamCube: RGB-D Panorama Generation via Multi-plane Synchronization}},
     author    = {Huang, Yukun and Zhou, Yanning and Wang, Jianan and Huang, Kaiyi and Liu, Xihui},
     booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},

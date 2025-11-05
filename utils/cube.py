@@ -238,56 +238,47 @@ def concat_dice_mask(dice: np.ndarray | Image.Image) -> Any:
     return dice
 
 
-def images_to_pano_and_cube(
-    images: Union[np.ndarray, torch.Tensor, List[Image.Image]],
-    batch: dict,
-    impl='crop',
-    return_cube=False,
-    keep_res=False,
+def images_to_equi_and_dice(
+    images: Union[np.ndarray, torch.Tensor],
+    equi_height: Optional[int] = None,
+    equi_width: Optional[int] = None,
+    impl: str = 'crop',
 ):
     """
     Args:
-        images: np.ndarray: (B, 6, H, W, C) or torch.Tensor: (B, 6, C, H, W), [0.0, 1.0]
-        batch: dict
+        images: np.ndarray (B, 6, H, W, C) | torch.Tensor (B, 6, C, H, W)
     Returns:
-        panos: np.ndarray, (B, H, W, C)
+        equis: np.ndarray, (B, H, W, C)
         dices: np.ndarray, (B, H, W, C)
     """
     if isinstance(images, torch.Tensor):
         images = rearrange(images.cpu().numpy(), '... c h w -> ... h w c')
-    elif isinstance(images, list):
-        images = np.array(images)
-        assert images.dtype == np.uint8, 'images must be uint8'
-        images = images / 255.0
-        if images.ndim == 4:
-            images = images[None]
-    height_pers, width_pers = batch['cameras']['height'][0, 0].item(), batch['cameras']['width'][0, 0].item()
-    height_pano, width_pano = batch['height'][0].item(), batch['width'][0].item()
-    assert height_pers == width_pers, 'perspective image must be square'
-    dtype = images.dtype
-    panos, dices = [], []
-    for batch_idx, views in enumerate(images):
-        if impl == 'pers':
-            fovs = batch['cameras']['fov'][batch_idx].cpu().numpy()
-            thetas = batch['cameras']['theta'][batch_idx].cpu().numpy()
-            phis = batch['cameras']['phi'][batch_idx].cpu().numpy()
-            cubemap = Cubemap.from_perspective(views, fovs=fovs, thetas=thetas, phis=phis, keep_res=keep_res)
-        else:
-            assert len(views) == 6
-            fov = batch['cameras']['fov'][0, 0].item()
-            cubemap = Cubemap.from_cubediffusion(views, 'list', fov=fov)
-        dice = cubemap.cube_all2all(cubemap.faces, cubemap.cube_format, 'dice').astype(dtype)
-        pano = cubemap.to_equirectangular(h=height_pano, w=width_pano).equirectangular.astype(dtype)
-        dices.append(dice)
-        panos.append(pano)
     
-    panos = np.stack(panos, axis=0)  # np.ndarray, (B, H, W, C)
+    if equi_height is None:
+        equi_height = images.shape[-3] * 2
+    
+    if equi_width is None:
+        equi_width = images.shape[-2] * 4
+    
+    equis, dices = [], []
+    for views in images:
+        assert len(views) == 6, "Expected 6 views for cubemap representation"
+        if impl == 'pers':
+            fovs = np.array([90.0] * 6, dtype=np.float32)
+            thetas = np.array([0.0, 90.0, 180.0, 270.0, 0.0, 0.0], dtype=np.float32)
+            phis = np.array([0.0, 0.0, 0.0, 0.0, 90.0, -90.0], dtype=np.float32)
+            cubemap = Cubemap.from_perspective(views, fovs=fovs, thetas=thetas, phis=phis)
+        else:
+            cubemap = Cubemap.from_cubediffusion(views, 'list')
+        dice = cubemap.cube_all2all(cubemap.faces, cubemap.cube_format, 'dice').astype(images.dtype)
+        equi = cubemap.to_equirectangular(h=equi_height, w=equi_width).equirectangular.astype(images.dtype)
+        dices.append(dice)
+        equis.append(equi)
+    
+    equis = np.stack(equis, axis=0)  # np.ndarray, (B, H, W, C)
     dices = np.stack(dices, axis=0)  # np.ndarray, (B, H, W, C)
 
-    if return_cube:
-        return panos, dices, cubemap
-    else:
-        return panos, dices
+    return equis, dices
 
 
 class Cubemap:

@@ -9,7 +9,7 @@ from torch.amp.autocast_mode import autocast
 from einops import repeat, rearrange
 
 from models.dreamcube import DreamCubeDepthPipeline
-from models.multiplane_sync import apply_custom_processors_for_vae, apply_custom_processors_for_unet
+from models.multiplane_sync_legacy import apply_custom_processors_for_vae, apply_custom_processors_for_unet
 
 from utils.cube import Cubemap
 from utils.depth import z_distance_to_depth, depth_to_z_distance, DepthVisualizer

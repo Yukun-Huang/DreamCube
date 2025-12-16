@@ -5,8 +5,7 @@ transformers==4.48.3
 gradio==5.4.0
 gsplat==1.5.2
 einops
-huggingface_hub==0.25.1
-kornia==0.7.4
+huggingface_hub
 matplotlib
 open3d
 opencv_python

@@ -4,15 +4,12 @@ diffusers==0.32.0
 transformers==4.48.3
 gradio==5.4.0
 gsplat==1.5.2
+pytorch3d==0.7.8
+scipy==1.15.3
 einops
-huggingface_hub
 matplotlib
 open3d
 opencv_python
 pillow
-pymesh==1.0.2
-pytorch3d==0.7.8
-scipy==1.15.3
-skimage
 tqdm
 trimesh

@@ -1,10 +1,10 @@
 import ast
-from lightning.pytorch.utilities import rank_zero_only
+# from lightning.pytorch.utilities import rank_zero_only
 
 
-@rank_zero_only
-def print_info(*values: object):
-    print(*values)
+# @rank_zero_only
+# def print_info(*values: object):
+#     print(*values)
 
 
 def safe_eval(input_string):

@@ -19,7 +19,7 @@ from diffusers.utils import deprecate
 from utils.camera import skybox_sample_camera
 from utils.depth import AbsoluteDepthScaler
 from utils.pers import prepare_positions
-from models.multiplane_sync import switch_custom_processors_for_vae
+from models.multiplane_sync.processors_sd import switch_custom_processors_for_vae
 
 
 @dataclass
